@@ -4,16 +4,13 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 
+
+
 // Page component for the landing page
 export default function LandingPage() {
   const [activeTab, setActiveTab] = useState<'free-beta' | 'pre-order'>('pre-order');
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Form submission logic would go here
-    alert('신청이 완료되었습니다. 곧 담당자가 연락드릴 예정입니다.');
-  };
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const toggleFaq = (index: number) => {
     if (activeFaqIndex === index) {
@@ -39,9 +36,18 @@ export default function LandingPage() {
         activeTab={activeTab} 
         setActiveTab={setActiveTab} 
         activeFaqIndex={activeFaqIndex} 
-        toggleFaq={toggleFaq} 
-        handleSubmit={handleSubmit} 
+        toggleFaq={toggleFaq}
+        setShowSuccessModal={setShowSuccessModal}
       />
+
+      {/* Success Modal */}
+      {showSuccessModal && (
+        <SuccessModal 
+          isOpen={showSuccessModal} 
+          onClose={() => setShowSuccessModal(false)} 
+          formType={activeTab} 
+        />
+      )}
 
       {/* 5. Footer Section */}
       <Footer />
@@ -52,23 +58,16 @@ export default function LandingPage() {
 // 1. Hero Section Component
 function HeroSection() {
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-r from-[#c8102e] to-[#9b0000] text-white overflow-hidden">
-      <div className="absolute inset-0 opacity-40">
-        <Image
-          src="/images/concert-bg.jpg"
-          alt="공연 배경 이미지"
-          fill
-          className="object-cover"
-          priority
-        />
-      </div>
+    <section className="relative min-h-[80vh] flex items-center justify-center bg-gradient-to-r from-[#c8102e] via-[#b01e2c] to-[#9b0000] text-white overflow-hidden">
+      <div className="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1IiBoZWlnaHQ9IjUiPgo8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiBmaWxsPSIjZmZmIj48L3JlY3Q+CjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiMwMDAiPjwvcmVjdD4KPC9zdmc+')]"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#9b0000]/10 to-[#9b0000]/50"></div>
       
       <div className="container mx-auto px-4 py-16 relative z-10">
         <div className="flex justify-center mb-10">
           <div className="flex items-center space-x-4">
-            <Image src="/images/maskit-logo.png" alt="마스킷 로고" width={120} height={40} />
+            <Image src="/images/maskit-logo-white.png" alt="마스킷 로고" width={120} height={40} />
             <span className="text-2xl font-bold">X</span>
-            <Image src="/images/cjes-logo.png" alt="CJeS 로고" width={120} height={40} />
+            <Image src="/images/cjes-logo-white.png" alt="CJeS 로고" width={120} height={40} />
           </div>
         </div>
 
@@ -160,7 +159,7 @@ function PainPointSolution() {
 
         {/* Solution Comparison */}
         <div>
-          <h2 className="text-3xl font-bold text-center mb-10">기존 방식 VS 마스킷 X CJeS 방식</h2>
+          <h2 className="text-3xl font-bold text-center mb-10">하나의 서비스 창구에서 편리한 공연 제작</h2>
           
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
@@ -197,6 +196,72 @@ function ServiceBenefits() {
     { title: "편의성", value: "1개", description: "단일 창구 커뮤니케이션", icon: "🔄" },
   ];
 
+  const services = [
+    { 
+      step: 1,
+      title: "기획 및 컨설팅",
+      description: "공연 콘셉트 기획 및 예산 설정",
+      isFree: true,
+      icon: "✍️"
+    },
+    { 
+      step: 2,
+      title: "대관",
+      description: "최적의 공연장 추천 및 계약 지원",
+      isFree: false,
+      icon: "🏛️"
+    },
+    { 
+      step: 3,
+      title: "포스터 제작",
+      description: "전문 디자이너의 맞춤형 포스터",
+      isFree: true,
+      icon: "🎨"
+    },
+    { 
+      step: 4,
+      title: "홍보 영상",
+      description: "1분 이내 SNS용 홍보 영상",
+      isFree: true,
+      icon: "🎬"
+    },
+    { 
+      step: 5,
+      title: "무대 제작",
+      description: "공연 콘셉트에 맞는 무대 설계",
+      isFree: false,
+      icon: "🎭"
+    },
+    { 
+      step: 6,
+      title: "SNS 홍보",
+      description: "콘텐츠 업로드 및 일정 관리",
+      isFree: true,
+      icon: "📱"
+    },
+    { 
+      step: 7,
+      title: "티켓 시스템",
+      description: "모바일 티켓 발권 및 관리",
+      isFree: true,
+      icon: "🎟️"
+    },
+    { 
+      step: 8,
+      title: "당일 운영",
+      description: "전문 스태프의 현장 지원",
+      isFree: false,
+      icon: "👥"
+    },
+    { 
+      step: 9,
+      title: "정산",
+      description: "티켓 판매 정산 처리",
+      isFree: true,
+      icon: "💰"
+    },
+  ];
+
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -215,7 +280,54 @@ function ServiceBenefits() {
 
         {/* Services Flow */}
         <div className="mb-16 relative max-w-3xl mx-auto">
-          {/* 기존 Services Flow 코드는 유지 */}
+          {/* Desktop & Mobile Timeline */}
+          <div className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-[#ffb6c1] to-[#c8102e]"></div>
+
+            <div className="space-y-8">
+              {services.map((service, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className={`relative flex items-center ${
+                    index % 2 === 0 ? 'flex-row-reverse' : 'flex-row'
+                  }`}
+                >
+                  {/* Timeline dot */}
+                  <div className="absolute left-1/2 transform -translate-x-1/2 w-8 h-8 bg-[#c8102e] rounded-full border-4 border-white flex items-center justify-center text-white font-bold z-10">
+                    {service.step}
+                  </div>
+
+                  {/* Content */}
+                  <div className={`w-5/12 ${index % 2 === 0 ? 'pr-8' : 'pl-8'}`}>
+                    <div className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-2xl">{service.icon}</div>
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          service.isFree 
+                            ? 'bg-[#fff0f0] text-[#c8102e] border border-[#c8102e]' 
+                            : 'bg-gray-100 text-gray-800'
+                        }`}>
+                          {service.isFree ? '무료' : '유료'}
+                        </span>
+                      </div>
+                      <div className="text-sm font-semibold mb-1">
+                        {service.title}
+                      </div>
+                      <p className="text-xs text-gray-600">{service.description}</p>
+                    </div>
+                  </div>
+
+                  {/* Empty space for timeline balance */}
+                  <div className="w-5/12"></div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
 
         {/* Benefits - 개선된 부분 */}
@@ -279,14 +391,14 @@ function ApplicationFAQ({
   activeTab, 
   setActiveTab, 
   activeFaqIndex, 
-  toggleFaq, 
-  handleSubmit 
+  toggleFaq,
+  setShowSuccessModal
 }: {
   activeTab: 'free-beta' | 'pre-order';
   setActiveTab: (tab: 'free-beta' | 'pre-order') => void;
   activeFaqIndex: number | null;
   toggleFaq: (index: number) => void;
-  handleSubmit: (e: React.FormEvent) => void;
+  setShowSuccessModal: (show: boolean) => void;
 }) {
   const faqs = [
     {
@@ -341,11 +453,52 @@ function ApplicationFAQ({
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6 border-t-4 border-[#c8102e]">
+          {/* Application Form */}
+          <form 
+            action="https://formsubmit.co/54bd27af5c5937bb4c4b043c746f1824"
+            method="POST"
+            className="bg-white shadow-md rounded-lg p-6 border-t-4 border-[#c8102e]"
+            onSubmit={(e) => {
+              const form = e.currentTarget;
+              
+              // 관심 서비스 체크박스 유효성 검사
+              const checkboxes = Array.from(form.querySelectorAll('input[name="관심 서비스[]"]')) as HTMLInputElement[];
+              const checked = checkboxes.some(checkbox => checkbox.checked);
+              
+              if (!checked) {
+                e.preventDefault();
+                alert('관심 서비스를 최소 1개 이상 선택해주세요.');
+                return;
+              }
+
+              // 모달 표시
+              e.preventDefault();
+              setShowSuccessModal(true);
+            }}
+          >
+            {/* FormSubmit Configuration */}
+            <input type="hidden" name="_next" value="https://maskitlab.com" />
+            <input type="hidden" name="_captcha" value="false" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="hidden" name="_cc" value="hoyeon.bae@gmail.com" />
+            <input type="hidden" name="_template" value="table" />
+            <input type="hidden" name="신청 유형" value={activeTab === 'free-beta' ? '무료 베타 서비스 신청' : '서비스 사전 예약'} />
+            <input type="hidden" name="_subject" value={`[${activeTab === 'free-beta' ? '무료 베타 서비스 신청' : '서비스 사전 예약'}] ${activeTab === 'free-beta' ? '6월 베타 서비스' : '정식 서비스'} 신청`} />
+            <input type="hidden" name="_autoresponse" value={`마스킷 X CJeS 공연제작 서비스의 ${
+              activeTab === 'free-beta' 
+                ? '무료 베타 서비스 신청' 
+                : '서비스 사전 예약'
+            }이 완료되었습니다.\n\n${
+              activeTab === 'free-beta'
+                ? '신청하신 내용을 검토한 후, 베타 서비스 선정 결과를 이메일로 안내해드리도록 하겠습니다.'
+                : '정식 서비스 출시 전, 상세한 서비스 안내와 혜택을 이메일로 전달해드리도록 하겠습니다.'
+            }\n\n감사합니다.`} />
+
             <div className="mb-6">
               <label className="block mb-2 text-sm font-medium text-gray-700">공연명 *</label>
               <input
                 type="text"
+                name="공연명"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent"
                 required
                 placeholder="공연명을 입력해주세요"
@@ -356,6 +509,7 @@ function ApplicationFAQ({
               <label className="block mb-2 text-sm font-medium text-gray-700">장르 *</label>
               <input
                 type="text"
+                name="장르"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
                 required
                 placeholder="공연 장르를 입력해주세요"
@@ -364,21 +518,25 @@ function ApplicationFAQ({
 
             <div className="mb-6">
               <label className="block mb-2 text-sm font-medium text-gray-700">예상 공연 시기 *</label>
-              <select className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent" required>
+              <select 
+                name="예상 공연 시기"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent" 
+                required
+              >
                 <option value="">선택해주세요</option>
                 {activeTab === 'free-beta' ? (
                   <>
-                    <option value="2025-06-early">2025년 6월 초</option>
-                    <option value="2025-06-mid">2025년 6월 중순</option>
-                    <option value="2025-06-late">2025년 6월 말</option>
+                    <option value="2025년 6월 초">2025년 6월 초</option>
+                    <option value="2025년 6월 중순">2025년 6월 중순</option>
+                    <option value="2025년 6월 말">2025년 6월 말</option>
                   </>
                 ) : (
                   <>
-                    <option value="2025-07">2025년 7월</option>
-                    <option value="2025-08">2025년 8월</option>
-                    <option value="2025-09">2025년 9월</option>
-                    <option value="2025-10">2025년 10월 이후</option>
-                    <option value="undecided">미정</option>
+                    <option value="2025년 7월">2025년 7월</option>
+                    <option value="2025년 8월">2025년 8월</option>
+                    <option value="2025년 9월">2025년 9월</option>
+                    <option value="2025년 10월 이후">2025년 10월 이후</option>
+                    <option value="미정">미정</option>
                   </>
                 )}
               </select>
@@ -388,8 +546,10 @@ function ApplicationFAQ({
               <label className="block mb-2 text-sm font-medium text-gray-700">예상 공연 규모 (관객 수) *</label>
               <input
                 type="number"
+                name="예상 관객 수"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
                 required
+                min="0"
                 placeholder="예상 관객 수를 입력해주세요"
               />
             </div>
@@ -398,6 +558,7 @@ function ApplicationFAQ({
               <label className="block mb-2 text-sm font-medium text-gray-700">연락처 (이메일) *</label>
               <input
                 type="email"
+                name="email"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
                 required
                 placeholder="연락받으실 이메일을 입력해주세요"
@@ -407,6 +568,7 @@ function ApplicationFAQ({
             <div className="mb-6">
               <label className="block mb-2 text-sm font-medium text-gray-700">공연 기획 의도</label>
               <textarea
+                name="공연 기획 의도"
                 className="w-full px-3 py-2 border border-gray-300 rounded-md h-24 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
                 placeholder="공연 기획 의도나 컨셉을 자유롭게 작성해주세요"
               ></textarea>
@@ -416,27 +578,27 @@ function ApplicationFAQ({
               <label className="block mb-2 text-sm font-medium text-gray-700">관심 서비스 (복수 선택 가능)</label>
               <div className="grid grid-cols-2 gap-2">
                 <label className="flex items-center">
-                  <input type="checkbox" className="mr-2 accent-[#c8102e]" />
+                  <input type="checkbox" name="관심 서비스[]" value="포스터 제작" className="mr-2 accent-[#c8102e]" />
                   포스터 제작
                 </label>
                 <label className="flex items-center">
-                  <input type="checkbox" className="mr-2 accent-[#800020]" />
+                  <input type="checkbox" name="관심 서비스[]" value="홍보 영상 제작" className="mr-2 accent-[#800020]" />
                   홍보 영상 제작
                 </label>
                 <label className="flex items-center">
-                  <input type="checkbox" className="mr-2 accent-[#800020]" />
+                  <input type="checkbox" name="관심 서비스[]" value="SNS 홍보" className="mr-2 accent-[#800020]" />
                   SNS 홍보
                 </label>
                 <label className="flex items-center">
-                  <input type="checkbox" className="mr-2 accent-[#800020]" />
+                  <input type="checkbox" name="관심 서비스[]" value="티켓 시스템" className="mr-2 accent-[#800020]" />
                   티켓 시스템
                 </label>
                 <label className="flex items-center">
-                  <input type="checkbox" className="mr-2 accent-[#800020]" />
+                  <input type="checkbox" name="관심 서비스[]" value="무대 제작" className="mr-2 accent-[#800020]" />
                   무대 제작 (유료)
                 </label>
                 <label className="flex items-center">
-                  <input type="checkbox" className="mr-2 accent-[#800020]" />
+                  <input type="checkbox" name="관심 서비스[]" value="대관 지원" className="mr-2 accent-[#800020]" />
                   대관 지원 (유료)
                 </label>
               </div>
@@ -444,7 +606,7 @@ function ApplicationFAQ({
 
             <div className="mb-6">
               <label className="flex items-center">
-                <input type="checkbox" className="mr-2 accent-[#c8102e]" required />
+                <input type="checkbox" required className="mr-2 accent-[#c8102e]" />
                 <span className="text-sm text-gray-700">개인정보 수집 및 이용에 동의합니다 *</span>
               </label>
             </div>
@@ -501,6 +663,92 @@ function ApplicationFAQ({
   );
 }
 
+// Success Modal Component
+function SuccessModal({ isOpen, onClose, formType }: { 
+  isOpen: boolean; 
+  onClose: () => void; 
+  formType: 'free-beta' | 'pre-order';
+}) {
+  if (!isOpen) return null;
+
+  const title = formType === 'free-beta' ? '무료 베타 서비스 신청' : '서비스 사전 예약';
+  const message = formType === 'free-beta' 
+    ? '베타 서비스 신청을 완료하시겠습니까? 확인을 누르시면 검토 후 선정 결과를 이메일로 안내해드리겠습니다.' 
+    : '서비스 사전 예약을 완료하시겠습니까? 확인을 누르시면 정식 서비스 출시 전 상세 정보를 이메일로 안내해드리겠습니다.';
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 relative">
+        <div className="absolute top-4 right-4">
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        
+        <div className="text-center">
+          <div className="mb-4">
+            <svg className="mx-auto w-16 h-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          
+          <h3 className="text-xl font-bold text-gray-900 mb-4">{title}</h3>
+          <p className="text-gray-600 mb-6">{message}</p>
+          
+          <button
+            onClick={async () => {
+              // 폼을 찾아서 데이터 전송
+              const form = document.querySelector('form') as HTMLFormElement;
+              if (form) {
+                const formData = new FormData(form);
+                const applicationType = formType === 'free-beta' ? '무료 베타 서비스 신청' : '서비스 사전 예약';
+                
+                try {
+                  const response = await fetch('/api/submit-form', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                      type: applicationType,
+                      performanceName: formData.get('공연명'),
+                      genre: formData.get('장르'),
+                      expectedDate: formData.get('예상 공연 시기'),
+                      expectedAudience: formData.get('예상 관객 수'),
+                      email: formData.get('email'),
+                      concept: formData.get('공연 기획 의도'),
+                      services: Array.from(form.querySelectorAll('input[name="관심 서비스[]"]:checked')).map((cb: Element) => (cb as HTMLInputElement).value)
+                    }),
+                  });
+
+                  if (!response.ok) {
+                    throw new Error('Failed to submit form');
+                  }
+
+                  // 성공적으로 제출됨
+                  form.reset();
+                } catch (error) {
+                  console.error('Error submitting form:', error);
+                  alert('신청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                }
+              }
+              onClose();
+            }}
+            className="px-6 py-3 bg-[#c8102e] text-white rounded-md hover:bg-[#9b0000] transition-colors"
+          >
+            확인
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // 5. Footer Section Component
 function Footer() {
   return (
@@ -514,7 +762,7 @@ function Footer() {
               <Image src="/images/cjes-logo-white.png" alt="CJeS 로고" width={100} height={30} />
             </div>
             <p className="text-gray-300 max-w-md">
-              마스킷과 CJeS 엔터테인먼트의 협력으로 탄생한 공연 제작 원스톱 서비스입니다.
+              마스킷과 CJeS STUDIO의 협력으로 탄생한 공연 제작 원스톱 서비스입니다.
               포스터 디자인부터 정산까지, 공연 제작의 A to Z를 한 곳에서 경험하세요.
             </p>
           </div>
@@ -523,19 +771,19 @@ function Footer() {
             <div>
               <h3 className="text-lg font-semibold mb-4 text-white">마스킷</h3>
               <ul className="space-y-2 text-gray-300">
-                <li>예매 시스템 전문 기업</li>
                 <li>모바일 티켓 솔루션</li>
-                <li>공연 데이터 분석</li>
-                <li>정산 처리 서비스</li>
+                <li>문화예술 빅데이터 분석</li>
+                <li>관객 관리 CRM</li>
+                <li>데이터 마케팅</li>
               </ul>
             </div>
             
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-white">CJeS 엔터테인먼트</h3>
+              <h3 className="text-lg font-semibold mb-4 text-white">CJeS STUDIO</h3>
               <ul className="space-y-2 text-gray-300">
-                <li>홍보 및 마케팅</li>
-                <li>포스터 및 홍보물 디자인</li>
-                <li>SNS 콘텐츠 제작</li>
+                <li>콘텐츠 제작</li>
+                <li>아티스트 매니지먼트</li>
+                <li></li>
                 <li>공연 운영 지원</li>
               </ul>
             </div>
@@ -544,26 +792,9 @@ function Footer() {
         
         <div className="mt-10 pt-6 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0">
-            <p className="text-sm text-gray-300">© 2025 마스킷 X CJeS 엔터테인먼트. All rights reserved.</p>
+            <p className="text-sm text-gray-300">© 2025 마스킷 X CJeS STUDIO. All rights reserved.</p>
           </div>
           
-          <div className="flex items-center space-x-4">
-            <a href="mailto:contact@maskit-cjes.com" className="text-gray-300 hover:text-white transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"></path>
-              </svg>
-            </a>
-            <a href="tel:+82021234567" className="text-gray-300 hover:text-white transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"></path>
-              </svg>
-            </a>
-            <a href="#" className="text-gray-300 hover:text-white transition-colors">
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.06 1.805.249 2.227.419.562.217.96.477 1.382.896.419.42.679.819.896 1.381.17.422.359 1.057.419 2.227.058 1.265.07 1.645.07 4.85s-.012 3.585-.07 4.85c-.06 1.17-.249 1.805-.419 2.227-.217.562-.477.96-.896 1.382-.42.419-.819.679-1.381.896-.422.17-1.057.359-2.227.419-1.265.058-1.645.07-4.85.07s-3.585-.012-4.85-.07c-1.17-.06-1.805-.249-2.227-.419-.562-.217-.96-.477-1.382-.896-.419-.42-.679-.819-.896-1.381-.17-.422-.359-1.057-.419-2.227-.058-1.265-.07-1.645-.07-4.85s.012-3.585.07-4.85c.06-1.17.249-1.805.419-2.227.217-.562.477-.96.896-1.382.42-.419.819-.679 1.381-.896.422-.17 1.057-.359 2.227-.419 1.265-.058 1.645-.07 4.85-.07zm0 2.163c-3.259 0-3.667.014-4.85.072-1.066.049-1.603.222-1.978.372-.4.167-.734.374-1.05.69-.317.317-.524.65-.691 1.05-.15.375-.322.91-.37 1.979-.059 1.184-.072 1.592-.072 4.85 0 3.259.014 3.668.072 4.85.048 1.066.221 1.603.37 1.978.167.4.374.734.69 1.05.317.317.65.524 1.05.691.375.15.91.323 1.978.371 1.184.059 1.591.072 4.85.072 3.259 0 3.668-.014 4.85-.072 1.066-.048 1.603-.221 1.978-.37.4-.167.734-.374 1.05-.69.317-.317.524-.65.691-1.05.15-.375.322-.91.37-1.979.059-1.184.072-1.592.072-4.85 0-3.259-.014-3.667-.072-4.85-.048-1.066-.221-1.603-.37-1.978-.167-.4-.374-.734-.69-1.05-.317-.317-.65-.524-1.05-.691-.375-.15-.91-.323-1.978-.371-1.184-.059-1.592-.072-4.85-.072zm0 3.678c-3.405 0-6.162 2.76-6.162 6.162 0 3.405 2.76 6.162 6.162 6.162 3.405 0 6.162-2.76 6.162-6.162 0-3.405-2.76-6.162-6.162-6.162zM12 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zM19.846 5.595c0 .795-.646 1.44-1.44 1.44-.795 0-1.44-.646-1.44-1.44 0-.794.646-1.439 1.44-1.439.793 0 1.44.645 1.44 1.439z"></path>
-              </svg>
-            </a>
-          </div>
         </div>
       </div>
     </footer>
