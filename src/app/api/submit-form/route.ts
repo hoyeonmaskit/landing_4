@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
         // 헤더가 없는 경우 헤더 설정
         await sheet.setHeaderRow(headers);
       }
-    } catch (_) {
+    } catch {
       // 시트가 비어 있거나 헤더가 없는 경우
       await sheet.setHeaderRow(headers);
     }
