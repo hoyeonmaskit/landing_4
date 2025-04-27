@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
       
       console.log('이메일이 성공적으로 전송되었습니다');
     } catch (emailError) {
-      console.error('이메일 전송 중 오류 발생:', emailError);
+      console.error('이메일 전송 중 오류 발생 :', emailError);
       // 이메일 전송 실패해도 API 응답은 성공으로 처리
     }
 
