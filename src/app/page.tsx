@@ -542,7 +542,7 @@ function ApplicationFAQ({
               const form = e.currentTarget;
               
               // 기본 필드 검증
-              const companyNameField = form.querySelector('input[name="회사/단체명"]') as HTMLInputElement;
+              // Remove unused companyNameField variable
               const phoneField = form.querySelector('input[name="phone"]') as HTMLInputElement;
               const emailField = form.querySelector('input[name="email"]') as HTMLInputElement;
               const performanceNameField = form.querySelector('input[name="공연명"]') as HTMLInputElement;
