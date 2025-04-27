@@ -11,6 +11,7 @@ export default function LandingPage() {
   const [activeTab, setActiveTab] = useState<'free-beta' | 'pre-order'>('pre-order');
   const [activeFaqIndex, setActiveFaqIndex] = useState<number | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const toggleFaq = (index: number) => {
     if (activeFaqIndex === index) {
@@ -38,6 +39,8 @@ export default function LandingPage() {
         activeFaqIndex={activeFaqIndex} 
         toggleFaq={toggleFaq}
         setShowSuccessModal={setShowSuccessModal}
+        isSubmitting={isSubmitting}
+        setIsSubmitting={setIsSubmitting}
       />
 
       {/* Success Modal */}
@@ -45,7 +48,8 @@ export default function LandingPage() {
         <SuccessModal 
           isOpen={showSuccessModal} 
           onClose={() => setShowSuccessModal(false)} 
-          formType={activeTab} 
+          formType={activeTab}
+          setIsSubmitting={setIsSubmitting}
         />
       )}
 
@@ -65,9 +69,9 @@ function HeroSection() {
       <div className="container mx-auto px-4 py-16 relative z-10">
         <div className="flex justify-center mb-10">
           <div className="flex items-center space-x-4">
-            <Image src="/images/maskit-logo-white.png" alt="마스킷 로고" width={120} height={40} />
+            <Image src="/images/maskit-logo-white.png" alt="마스킷 로고" width={120} height={36} />
             <span className="text-2xl font-bold">X</span>
-            <Image src="/images/cjes-logo-white.png" alt="CJeS 로고" width={120} height={40} />
+            <span className="text-2xl md:text-3xl font-bold font-pretendard">CJeS STUDIO</span>
           </div>
         </div>
 
@@ -77,15 +81,18 @@ function HeroSection() {
           transition={{ duration: 0.8 }}
           className="text-center max-w-4xl mx-auto"
         >
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">공연 제작의 A to Z, 원스톱 서비스</h1>
-          <p className="text-xl md:text-2xl mb-10">포스터 제작부터 티켓 정산까지, 하나의 서비스에서 해결하세요</p>
+          <div className="mb-6">
+            <span className="inline-block px-4 py-2 bg-white/20 rounded-full text-lg md:text-xl mb-3 backdrop-blur-sm">
+              <span className="font-bold text-white">큐리스 프로덕션</span> 서비스 런칭
+            </span>
+          </div>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">공연 제작의 A to Z 원스탑 서비스</h1>
+          <p className="text-xl md:text-2xl mb-4">공연 기획부터 티켓 정산까지</p>
+          <p className="text-xl md:text-2xl mb-10 font-bold">큐리스 프로덕션의 원스탑 솔루션을 경험해보세요</p>
           
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="#apply" className="px-8 py-4 bg-white text-[#c8102e] hover:bg-gray-100 rounded-md text-lg font-semibold transition-colors shadow-lg">
-              무료 베타 서비스 신청하기
-            </a>
-            <a href="#apply" className="px-8 py-4 bg-[#333] text-white hover:bg-gray-700 rounded-md text-lg font-semibold transition-colors shadow-lg">
-              서비스 사전 예약하기
+          <div className="flex justify-center">
+            <a href="#apply" className="px-10 py-4 bg-white text-[#c8102e] hover:bg-gray-100 rounded-md text-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+              서비스 신청하기
             </a>
           </div>
         </motion.div>
@@ -165,17 +172,17 @@ function PainPointSolution() {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-[#c8102e] text-white">
-                  <th className="p-4 text-left">카테고리</th>
-                  <th className="p-4 text-left">기존 방식</th>
-                  <th className="p-4 text-left">마스킷 X CJeS 방식</th>
+                  <th className="p-4 text-center text-sm">카테고리</th>
+                  <th className="p-4 text-center text-sm">기존</th>
+                  <th className="p-4 text-center text-sm">큐리스 프로덕션</th>
                 </tr>
               </thead>
               <tbody>
                 {comparisonItems.map((item, index) => (
                   <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                    <td className="p-4 font-medium border-b border-gray-200">{item.category}</td>
-                    <td className="p-4 text-red-600 border-b border-gray-200">{item.traditional}</td>
-                    <td className="p-4 text-[#c8102e] border-b border-gray-200 font-medium">{item.integrated}</td>
+                    <td className="p-4 font-medium border-b border-gray-200 text-center text-sm">{item.category}</td>
+                    <td className="p-4 text-gray-500 border-b border-gray-200 text-center text-sm">{item.traditional}</td>
+                    <td className="p-4 text-[#c8102e] border-b border-gray-200 font-semibold text-center text-sm">{item.integrated}</td>
                   </tr>
                 ))}
               </tbody>
@@ -257,7 +264,7 @@ function ServiceBenefits() {
       step: 9,
       title: "정산",
       description: "티켓 판매 정산 처리",
-      isFree: true,
+      isFree: false,
       icon: "💰"
     },
   ];
@@ -272,9 +279,15 @@ function ServiceBenefits() {
           className="text-center mb-12"
         >
           <h2 className="text-3xl font-bold mb-4">무료 베타 서비스 파트너를 찾습니다</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            6월 중 공연 예정인 프로젝트라면 장르나 규모에 상관없이 지원 가능합니다.
-            개인 아티스트부터 중견 제작사까지, 공연 제작의 새로운 패러다임을 함께 만들어가세요.
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-2">
+            6월~7월 예정인 공연이라면 장르나 규모에 상관없이 지원 가능합니다.
+            개인 아티스트부터 중견 제작사까지,
+          </p>
+          <p className="text-xl md:text-2xl font-bold text-[#c8102e] max-w-3xl mx-auto animate-pulse">
+            공연 제작 원스탑 솔루션을 경험해보세요
+          </p>
+          <p className="text-sm text-[#c8102e] font-medium mt-4">
+            ※ 선착순 모집으로 인해 무료 베타 서비스 파트너는 조기 마감될 수 있습니다.
           </p>
         </motion.div>
 
@@ -373,13 +386,98 @@ function ServiceBenefits() {
           
           <div className="text-center mt-16">
             <a href="#apply" className="inline-block px-8 py-4 bg-[#c8102e] text-white hover:bg-[#9b0000] rounded-md text-lg font-semibold transition-colors shadow-md">
-              무료 베타 서비스 신청하기
+              서비스 신청하기
             </a>
           </div>
         </div>
 
         <div className="mt-8 text-center text-sm text-gray-500">
           * 유료 옵션은 별도 협의를 통해 제공됩니다. 예매 정산 수수료는 4%입니다.
+        </div>
+
+        {/* 서비스 진행 일정 */}
+        <div className="mt-16 max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-10">무료 베타 서비스 진행 일정</h2>
+          
+          <div className="relative py-16">
+            {/* 수평선 */}
+            <div className="absolute top-1/2 left-0 right-0 h-1.5 bg-gradient-to-r from-[#ffb6c1] to-[#c8102e] transform -translate-y-1/2"></div>
+            
+            {/* 타임라인 항목들 */}
+            <div className="grid grid-cols-5 relative">
+              {/* 5월: 신청 접수 */}
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 bg-white border-4 border-[#c8102e] rounded-full flex items-center justify-center text-[#c8102e] font-bold text-lg z-10 mb-6 shadow-md">1</div>
+                <div className="text-center bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-100 mt-2">
+                  <h3 className="font-bold text-[#c8102e] mb-1">5월</h3>
+                  <p className="text-sm text-gray-700">신청 접수</p>
+                </div>
+              </div>
+              
+              {/* 5월 셋째주: 선정 */}
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 bg-white border-4 border-[#c8102e] rounded-full flex items-center justify-center text-[#c8102e] font-bold text-lg z-10 mb-6 shadow-md">2</div>
+                <div className="text-center bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-100 mt-2">
+                  <h3 className="font-bold text-[#c8102e] mb-1">5월 셋째주</h3>
+                  <p className="text-sm text-gray-700">무료 베타 서비스<br/>대상 공연 선정</p>
+                </div>
+              </div>
+              
+              {/* 6월 1일: 예매 시작 */}
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 bg-white border-4 border-[#c8102e] rounded-full flex items-center justify-center text-[#c8102e] font-bold text-lg z-10 mb-6 shadow-md">3</div>
+                <div className="text-center bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-100 mt-2">
+                  <h3 className="font-bold text-[#c8102e] mb-1">6월 1일</h3>
+                  <p className="text-sm text-gray-700">제작 지원 및<br/>예매 시작</p>
+                </div>
+              </div>
+              
+              {/* 공연 진행 */}
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 bg-white border-4 border-[#c8102e] rounded-full flex items-center justify-center text-[#c8102e] font-bold text-lg z-10 mb-6 shadow-md">4</div>
+                <div className="text-center bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-100 mt-2">
+                  <h3 className="font-bold text-[#c8102e] mb-1">6월~7월</h3>
+                  <p className="text-sm text-gray-700">공연 진행</p>
+                </div>
+              </div>
+              
+              {/* 결과 리포트 및 정산 */}
+              <div className="flex flex-col items-center">
+                <div className="w-12 h-12 bg-white border-4 border-[#c8102e] rounded-full flex items-center justify-center text-[#c8102e] font-bold text-lg z-10 mb-6 shadow-md">5</div>
+                <div className="text-center bg-white px-3 py-2 rounded-lg shadow-sm border border-gray-100 mt-2">
+                  <h3 className="font-bold text-[#c8102e] mb-1">공연 종료 후</h3>
+                  <p className="text-sm text-gray-700">결과 리포트<br/>제공 및 정산</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 중요 안내사항 박스 */}
+          <div className="mt-12 bg-[#fff9f9] border border-[#ffb6c1] rounded-lg p-6 shadow-sm">
+            <h3 className="text-xl font-bold mb-4 text-[#c8102e]">중요 안내사항</h3>
+            <ul className="space-y-3 text-gray-700">
+              <li className="flex items-start">
+                <span className="text-[#c8102e] mr-2">•</span>
+                <p><strong>무료 베타 서비스는 6월~7월 예정 공연</strong>을 대상으로 하며, <strong>선착순으로 모집</strong>되어 조기에 마감될 수 있습니다.</p>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#c8102e] mr-2">•</span>
+                <p><strong>서비스 사전 예약은 공연 일정과 관계없이 가능</strong>하며, 정식 출시 시 우선적인 서비스 혜택을 받으실 수 있습니다.</p>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#c8102e] mr-2">•</span>
+                <p><strong>6월 1일부터 티켓 예매가 가능</strong>합니다. 티켓 예매 페이지는 선정된 공연에 한해 오픈됩니다.</p>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#c8102e] mr-2">•</span>
+                <p><strong>무료 베타 서비스는 서비스 품질 개선을 위한 피드백을 적극적으로 제공</strong>해 주셔야 합니다. 이는 더 나은 서비스를 위한 중요한 자료로 활용됩니다.</p>
+              </li>
+              <li className="flex items-start">
+                <span className="text-[#c8102e] mr-2">•</span>
+                <p>베타 서비스 이후 <strong>무료 공연 데이터 분석 리포트를 제공</strong>해 드립니다. 이를 통해 공연의 성과를 객관적으로 분석할 수 있습니다.</p>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </section>
@@ -392,13 +490,17 @@ function ApplicationFAQ({
   setActiveTab, 
   activeFaqIndex, 
   toggleFaq,
-  setShowSuccessModal
+  setShowSuccessModal,
+  isSubmitting,
+  setIsSubmitting
 }: {
   activeTab: 'free-beta' | 'pre-order';
   setActiveTab: (tab: 'free-beta' | 'pre-order') => void;
   activeFaqIndex: number | null;
   toggleFaq: (index: number) => void;
   setShowSuccessModal: (show: boolean) => void;
+  isSubmitting: boolean;
+  setIsSubmitting: (isSubmitting: boolean) => void;
 }) {
   const faqs = [
     {
@@ -428,30 +530,8 @@ function ApplicationFAQ({
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-center mb-12">지금 바로 신청하세요</h2>
         
-        {/* Application Tabs & Form */}
+        {/* Application Form */}
         <div className="max-w-2xl mx-auto mb-16">
-          <div className="flex mb-8">
-            <button
-              onClick={() => setActiveTab('free-beta')}
-              className={`flex-1 py-3 text-center text-lg font-medium ${
-                activeTab === 'free-beta'
-                  ? 'bg-white text-[#c8102e] border-2 border-[#c8102e]'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-              }`}
-            >
-              무료 베타 서비스 신청
-            </button>
-            <button
-              onClick={() => setActiveTab('pre-order')}
-              className={`flex-1 py-3 text-center text-lg font-medium ${
-                activeTab === 'pre-order'
-                  ? 'bg-[#333] text-white'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
-              }`}
-            >
-              서비스 사전 예약
-            </button>
-          </div>
 
           {/* Application Form */}
           <form 
@@ -460,6 +540,74 @@ function ApplicationFAQ({
             className="bg-white shadow-md rounded-lg p-6 border-t-4 border-[#c8102e]"
             onSubmit={(e) => {
               const form = e.currentTarget;
+              
+              // 기본 필드 검증
+              const companyNameField = form.querySelector('input[name="회사/단체명"]') as HTMLInputElement;
+              const phoneField = form.querySelector('input[name="phone"]') as HTMLInputElement;
+              const emailField = form.querySelector('input[name="email"]') as HTMLInputElement;
+              const performanceNameField = form.querySelector('input[name="공연명"]') as HTMLInputElement;
+              const genreField = form.querySelector('input[name="장르"]') as HTMLInputElement;
+              const audienceField = form.querySelector('input[name="예상 관객 수"]') as HTMLInputElement;
+              const dateField = form.querySelector('select[name="예상 공연 시기"]') as HTMLSelectElement;
+              const progressField = form.querySelector('select[name="현재 진행 수준"]') as HTMLSelectElement;
+              
+              // 이메일 형식 검증
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              if (!emailRegex.test(emailField.value)) {
+                e.preventDefault();
+                alert('올바른 이메일 주소를 입력해주세요.');
+                emailField.focus();
+                return;
+              }
+              
+              // 전화번호 형식 검증
+              if (phoneField.value.length < 10 || phoneField.value.length > 11 || !/^[0-9]+$/.test(phoneField.value)) {
+                e.preventDefault();
+                alert('올바른 전화번호를 입력해주세요. (10-11자리 숫자)');
+                phoneField.focus();
+                return;
+              }
+              
+              // 공연명 길이 검증
+              if (performanceNameField.value.length < 2) {
+                e.preventDefault();
+                alert('공연명은 최소 2자 이상 입력해주세요.');
+                performanceNameField.focus();
+                return;
+              }
+              
+              // 장르 검증
+              if (genreField.value.length < 2) {
+                e.preventDefault();
+                alert('장르는 최소 2자 이상 입력해주세요.');
+                genreField.focus();
+                return;
+              }
+              
+              // 관람객 수 검증
+              const audienceCount = parseInt(audienceField.value, 10);
+              if (isNaN(audienceCount) || audienceCount < 1) {
+                e.preventDefault();
+                alert('예상 관객 수는 1명 이상이어야 합니다.');
+                audienceField.focus();
+                return;
+              }
+              
+              // 공연 시기 검증
+              if (!dateField.value) {
+                e.preventDefault();
+                alert('예상 공연 시기를 선택해주세요.');
+                dateField.focus();
+                return;
+              }
+              
+              // 진행 수준 검증
+              if (!progressField.value) {
+                e.preventDefault();
+                alert('현재 진행 수준을 선택해주세요.');
+                progressField.focus();
+                return;
+              }
               
               // 관심 서비스 체크박스 유효성 검사
               const checkboxes = Array.from(form.querySelectorAll('input[name="관심 서비스[]"]')) as HTMLInputElement[];
@@ -470,9 +618,19 @@ function ApplicationFAQ({
                 alert('관심 서비스를 최소 1개 이상 선택해주세요.');
                 return;
               }
+              
+              // 개인정보 수집 동의 검증
+              const privacyCheckbox = form.querySelector('input[type="checkbox"][required]') as HTMLInputElement;
+              if (!privacyCheckbox.checked) {
+                e.preventDefault();
+                alert('개인정보 수집 및 이용에 동의해주셔야 합니다.');
+                privacyCheckbox.focus();
+                return;
+              }
 
-              // 모달 표시
+              // 로딩 상태 활성화 및 모달 표시
               e.preventDefault();
+              setIsSubmitting(true);
               setShowSuccessModal(true);
             }}
           >
@@ -482,125 +640,361 @@ function ApplicationFAQ({
             <input type="hidden" name="_template" value="table" />
             <input type="hidden" name="_cc" value="hoyeon.bae@gmail.com" />
             <input type="hidden" name="_template" value="table" />
-            <input type="hidden" name="신청 유형" value={activeTab === 'free-beta' ? '무료 베타 서비스 신청' : '서비스 사전 예약'} />
-            <input type="hidden" name="_subject" value={`[${activeTab === 'free-beta' ? '무료 베타 서비스 신청' : '서비스 사전 예약'}] ${activeTab === 'free-beta' ? '6월 베타 서비스' : '정식 서비스'} 신청`} />
-            <input type="hidden" name="_autoresponse" value={`마스킷 X CJeS 공연제작 서비스의 ${
-              activeTab === 'free-beta' 
-                ? '무료 베타 서비스 신청' 
-                : '서비스 사전 예약'
-            }이 완료되었습니다.\n\n${
-              activeTab === 'free-beta'
-                ? '신청하신 내용을 검토한 후, 베타 서비스 선정 결과를 이메일로 안내해드리도록 하겠습니다.'
-                : '정식 서비스 출시 전, 상세한 서비스 안내와 혜택을 이메일로 전달해드리도록 하겠습니다.'
-            }\n\n감사합니다.`} />
+            <input type="hidden" name="_subject" value={`[마스킷 X CJeS] 공연 제작 서비스 신청`} />
+            <input type="hidden" name="_autoresponse" value={`마스킷 X CJeS 공연제작 서비스 신청이 완료되었습니다.\n\n신청하신 내용을 검토한 후, 추가 안내사항을 이메일로 전달해드리도록 하겠습니다.\n\n감사합니다.`} />
 
-            <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium text-gray-700">공연명 *</label>
-              <input
-                type="text"
-                name="공연명"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent"
-                required
-                placeholder="공연명을 입력해주세요"
-              />
+            {/* 신청자 정보 섹션 */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4 pb-2 border-b border-gray-200">신청자 정보</h3>
+              
+              {/* 신청자 유형 */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">신청자 유형 *</label>
+                <div className="flex flex-wrap gap-4">
+                  <label className="flex items-center">
+                    <input type="radio" name="신청자 유형" value="개인" required className="mr-2 accent-[#c8102e]" />
+                    <span>개인</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input type="radio" name="신청자 유형" value="개인사업자" required className="mr-2 accent-[#c8102e]" />
+                    <span>개인사업자</span>
+                  </label>
+                  <label className="flex items-center">
+                    <input type="radio" name="신청자 유형" value="법인사업자" required className="mr-2 accent-[#c8102e]" />
+                    <span>법인사업자</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* 회사/단체명 */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">회사/단체명</label>
+                <input
+                  type="text"
+                  name="회사/단체명"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent"
+                  placeholder="회사 또는 단체명을 입력해주세요"
+                />
+              </div>
+
+              {/* 연락처 (이메일) */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">이메일 *</label>
+                <input
+                  type="email"
+                  name="email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent"
+                  required
+                  placeholder="연락받으실 이메일을 입력해주세요"
+                />
+              </div>
+              
+              {/* 연락처 (핸드폰) */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">핸드폰 번호 *</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent"
+                  required
+                  placeholder="'-' 없이 숫자만 입력해주세요"
+                  pattern="[0-9]{10,11}"
+                  title="'-' 없이 숫자 10-11자리를 입력해주세요"
+                />
+              </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium text-gray-700">장르 *</label>
-              <input
-                type="text"
-                name="장르"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                required
-                placeholder="공연 장르를 입력해주세요"
-              />
+            {/* 공연 정보 섹션 */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4 pb-2 border-b border-gray-200">공연 정보</h3>
+
+              {/* 공연명 */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">공연명 *</label>
+                <input
+                  type="text"
+                  name="공연명"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent"
+                  required
+                  placeholder="공연명을 입력해주세요"
+                />
+              </div>
+
+              {/* 장르 */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">장르 *</label>
+                <input
+                  type="text"
+                  name="장르"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent"
+                  required
+                  placeholder="공연 장르를 입력해주세요"
+                />
+              </div>
+
+              {/* 예상 공연 시기 */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">예상 공연 시기 *</label>
+                <select 
+                  name="예상 공연 시기"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent" 
+                  required
+                >
+                  <option value="">선택해주세요</option>
+                  <option value="2025년 6월 초">2025년 6월 초</option>
+                  <option value="2025년 6월 중순">2025년 6월 중순</option>
+                  <option value="2025년 6월 말">2025년 6월 말</option>
+                  <option value="2025년 7월">2025년 7월</option>
+                  <option value="2025년 8월">2025년 8월</option>
+                  <option value="2025년 9월">2025년 9월</option>
+                  <option value="2025년 10월 이후">2025년 10월 이후</option>
+                  <option value="미정">미정</option>
+                </select>
+              </div>
+
+              {/* 예상 공연 규모 */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">예상 공연 규모 (관객 수) *</label>
+                <input
+                  type="number"
+                  name="예상 관객 수"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent"
+                  required
+                  min="0"
+                  placeholder="예상 관객 수를 입력해주세요"
+                />
+              </div>
+
+              {/* 현재 진행 수준 */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">현재 진행 수준 *</label>
+                <select 
+                  name="현재 진행 수준"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent" 
+                  required
+                >
+                  <option value="">선택해주세요</option>
+                  <option value="아이디어 단계">아이디어 단계</option>
+                  <option value="기획 중">기획 중</option>
+                  <option value="기획 완료">기획 완료</option>
+                  <option value="대관 완료">대관 완료</option>
+                  <option value="배우/아티스트 섭외 중">배우/아티스트 섭외 중</option>
+                  <option value="배우/아티스트 섭외 완료">배우/아티스트 섭외 완료</option>
+                  <option value="제작 중">제작 중</option>
+                  <option value="티켓 판매 준비 중">티켓 판매 준비 중</option>
+                  <option value="티켓 판매 중">티켓 판매 중</option>
+                </select>
+              </div>
+
+              {/* 완료된 제작 단계 */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">완료된 제작 단계 (복수 선택 가능)</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <label className="flex items-center">
+                    <input type="checkbox" name="완료된 제작 단계[]" value="기획서 작성" className="mr-2 accent-[#c8102e]" />
+                    기획서 작성
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" name="완료된 제작 단계[]" value="대본/악보 완성" className="mr-2 accent-[#c8102e]" />
+                    대본/악보 완성
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" name="완료된 제작 단계[]" value="대관 계약" className="mr-2 accent-[#c8102e]" />
+                    대관 계약
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" name="완료된 제작 단계[]" value="인력 섭외" className="mr-2 accent-[#c8102e]" />
+                    인력 섭외
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" name="완료된 제작 단계[]" value="예산 편성" className="mr-2 accent-[#c8102e]" />
+                    예산 편성
+                  </label>
+                  <label className="flex items-center">
+                    <input type="checkbox" name="완료된 제작 단계[]" value="홍보물 제작" className="mr-2 accent-[#c8102e]" />
+                    홍보물 제작
+                  </label>
+                </div>
+              </div>
+
+              {/* 공연 기획 의도 */}
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">공연 기획 의도</label>
+                <textarea
+                  name="공연 기획 의도"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md h-24 focus:outline-none focus:ring-2 focus:ring-[#c8102e] focus:border-transparent"
+                  placeholder="공연 기획 의도나 컨셉을 자유롭게 작성해주세요"
+                ></textarea>
+              </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium text-gray-700">예상 공연 시기 *</label>
-              <select 
-                name="예상 공연 시기"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent" 
-                required
-              >
-                <option value="">선택해주세요</option>
-                {activeTab === 'free-beta' ? (
-                  <>
-                    <option value="2025년 6월 초">2025년 6월 초</option>
-                    <option value="2025년 6월 중순">2025년 6월 중순</option>
-                    <option value="2025년 6월 말">2025년 6월 말</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="2025년 7월">2025년 7월</option>
-                    <option value="2025년 8월">2025년 8월</option>
-                    <option value="2025년 9월">2025년 9월</option>
-                    <option value="2025년 10월 이후">2025년 10월 이후</option>
-                    <option value="미정">미정</option>
-                  </>
-                )}
-              </select>
+            {/* 서비스 선택 섹션 */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4 pb-2 border-b border-gray-200">희망 서비스</h3>
+              
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">관심 서비스 (복수 선택 가능) *</label>
+                <p className="text-sm text-gray-500 mb-3">공연 기획부터 정산까지 필요한 모든 서비스를 선택해주세요</p>
+                
+                {/* 기획 단계 */}
+                <div className="mb-4">
+                  <p className="font-medium text-gray-700 mb-2 border-l-4 border-[#c8102e] pl-2">기획 단계</p>
+                  <div className="grid grid-cols-2 gap-2 ml-3">
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="공연 기획 컨설팅" className="mr-2 accent-[#c8102e]" />
+                      공연 기획 컨설팅
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="예산 계획 수립" className="mr-2 accent-[#c8102e]" />
+                      예산 계획 수립
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="대관 지원" className="mr-2 accent-[#c8102e]" />
+                      대관 지원
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="인력 구성 자문" className="mr-2 accent-[#c8102e]" />
+                      인력 구성 자문
+                    </label>
+                  </div>
+                </div>
+                
+                {/* 제작 단계 */}
+                <div className="mb-4">
+                  <p className="font-medium text-gray-700 mb-2 border-l-4 border-[#c8102e] pl-2">제작 단계</p>
+                  <div className="grid grid-cols-2 gap-2 ml-3">
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="무대 디자인" className="mr-2 accent-[#c8102e]" />
+                      무대 디자인 (유료)
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="무대 제작" className="mr-2 accent-[#c8102e]" />
+                      무대 제작 (유료)
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="조명 음향 지원" className="mr-2 accent-[#c8102e]" />
+                      조명/음향 지원 (유료)
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="연습실 대관 지원" className="mr-2 accent-[#c8102e]" />
+                      연습실 대관 지원 (유료)
+                    </label>
+                  </div>
+                </div>
+                
+                {/* 홍보 단계 */}
+                <div className="mb-4">
+                  <p className="font-medium text-gray-700 mb-2 border-l-4 border-[#c8102e] pl-2">홍보 단계</p>
+                  <div className="grid grid-cols-2 gap-2 ml-3">
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="포스터 제작" className="mr-2 accent-[#c8102e]" />
+                      포스터 제작
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="홍보 영상 제작" className="mr-2 accent-[#c8102e]" />
+                      홍보 영상 제작
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="SNS 홍보" className="mr-2 accent-[#c8102e]" />
+                      SNS 홍보
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="보도자료 배포" className="mr-2 accent-[#c8102e]" />
+                      보도자료 배포
+                    </label>
+                  </div>
+                </div>
+                
+                {/* 운영 단계 */}
+                <div className="mb-4">
+                  <p className="font-medium text-gray-700 mb-2 border-l-4 border-[#c8102e] pl-2">운영 단계</p>
+                  <div className="grid grid-cols-2 gap-2 ml-3">
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="티켓 시스템" className="mr-2 accent-[#c8102e]" />
+                      티켓 시스템
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="현장 스태프 운영" className="mr-2 accent-[#c8102e]" />
+                      현장 스태프 운영 (유료)
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="관객 응대 채널 운영" className="mr-2 accent-[#c8102e]" />
+                      관객 응대 채널 운영
+                    </label>
+                  </div>
+                </div>
+                
+                {/* 정산 단계 */}
+                <div className="mb-2">
+                  <p className="font-medium text-gray-700 mb-2 border-l-4 border-[#c8102e] pl-2">정산 단계</p>
+                  <div className="grid grid-cols-2 gap-2 ml-3">
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="티켓 판매 정산" className="mr-2 accent-[#c8102e]" />
+                      티켓 판매 정산
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="세금 계산서 발행" className="mr-2 accent-[#c8102e]" />
+                      세금 계산서 발행
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="공연 결과 보고서" className="mr-2 accent-[#c8102e]" />
+                      공연 결과 보고서
+                    </label>
+                    <label className="flex items-center">
+                      <input type="checkbox" name="관심 서비스[]" value="관객 데이터 분석" className="mr-2 accent-[#c8102e]" />
+                      관객 데이터 분석
+                    </label>
+                  </div>
+                </div>
+                
+                <p className="mt-4 text-sm text-gray-500">* 유료 옵션은 별도 협의를 통해 제공됩니다.</p>
+              </div>
             </div>
 
-            <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium text-gray-700">예상 공연 규모 (관객 수) *</label>
-              <input
-                type="number"
-                name="예상 관객 수"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                required
-                min="0"
-                placeholder="예상 관객 수를 입력해주세요"
-              />
-            </div>
-
-            <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium text-gray-700">연락처 (이메일) *</label>
-              <input
-                type="email"
-                name="email"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                required
-                placeholder="연락받으실 이메일을 입력해주세요"
-              />
-            </div>
-
-            <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium text-gray-700">공연 기획 의도</label>
-              <textarea
-                name="공연 기획 의도"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md h-24 focus:outline-none focus:ring-2 focus:ring-[#800020] focus:border-transparent"
-                placeholder="공연 기획 의도나 컨셉을 자유롭게 작성해주세요"
-              ></textarea>
-            </div>
-
-            <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium text-gray-700">관심 서비스 (복수 선택 가능)</label>
-              <div className="grid grid-cols-2 gap-2">
-                <label className="flex items-center">
-                  <input type="checkbox" name="관심 서비스[]" value="포스터 제작" className="mr-2 accent-[#c8102e]" />
-                  포스터 제작
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" name="관심 서비스[]" value="홍보 영상 제작" className="mr-2 accent-[#800020]" />
-                  홍보 영상 제작
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" name="관심 서비스[]" value="SNS 홍보" className="mr-2 accent-[#800020]" />
-                  SNS 홍보
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" name="관심 서비스[]" value="티켓 시스템" className="mr-2 accent-[#800020]" />
-                  티켓 시스템
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" name="관심 서비스[]" value="무대 제작" className="mr-2 accent-[#800020]" />
-                  무대 제작 (유료)
-                </label>
-                <label className="flex items-center">
-                  <input type="checkbox" name="관심 서비스[]" value="대관 지원" className="mr-2 accent-[#800020]" />
-                  대관 지원 (유료)
-                </label>
+            {/* 신청 유형 선택 섹션 */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold mb-4 pb-2 border-b border-gray-200">신청 유형</h3>
+              
+              <div className="mb-6">
+                <label className="block mb-2 text-sm font-medium text-gray-700">신청 유형 선택 *</label>
+                <div className="flex flex-col gap-3">
+                  <label className={`flex items-center p-4 border rounded-lg ${
+                    activeTab === 'free-beta' ? 'border-[#c8102e] bg-[#fff0f0]' : 'border-gray-300'
+                  }`}>
+                    <input 
+                      type="radio" 
+                      name="신청 유형" 
+                      value="무료 베타 서비스 신청" 
+                      checked={activeTab === 'free-beta'} 
+                      onChange={() => setActiveTab('free-beta')}
+                      className="mr-3 accent-[#c8102e]" 
+                      required
+                    />
+                    <div>
+                      <span className="font-medium block">무료 베타 서비스 신청</span>
+                      <span className="text-sm text-gray-600">6월 중 진행되는 공연을 대상으로 무료 서비스를 제공합니다</span>
+                      <span className="text-xs text-[#c8102e] block mt-1">※ 선착순 모집으로 인해 조기 마감될 수 있습니다</span>
+                    </div>
+                  </label>
+                  
+                  <label className={`flex items-center p-4 border rounded-lg ${
+                    activeTab === 'pre-order' ? 'border-[#333] bg-gray-50' : 'border-gray-300'
+                  }`}>
+                    <input 
+                      type="radio" 
+                      name="신청 유형" 
+                      value="서비스 사전 예약" 
+                      checked={activeTab === 'pre-order'} 
+                      onChange={() => setActiveTab('pre-order')}
+                      className="mr-3 accent-[#333]" 
+                      required
+                    />
+                    <div>
+                      <span className="font-medium block">서비스 사전 예약</span>
+                      <span className="text-sm text-gray-600">7월 이후 정식 서비스 출시 시 우선 혜택을 제공합니다</span>
+                    </div>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -613,13 +1007,18 @@ function ApplicationFAQ({
 
             <button
               type="submit"
-              className={`w-full py-3 ${
-                activeTab === 'free-beta' 
-                  ? 'bg-white text-[#c8102e] hover:bg-[#fff0f0] border border-[#c8102e]' 
-                  : 'bg-[#333] hover:bg-gray-700 text-white'
-              } rounded-md text-lg font-semibold transition-colors shadow-md`}
+              disabled={isSubmitting}
+              className={`w-full py-3 bg-gradient-to-r from-[#c8102e] to-[#9b0000] hover:from-[#9b0000] hover:to-[#800020] text-white rounded-md text-lg font-semibold transition-all duration-300 shadow-md ${isSubmitting ? 'opacity-80 cursor-not-allowed' : ''}`}
             >
-              {activeTab === 'free-beta' ? '무료 베타 신청하기' : '서비스 사전 예약하기'}
+              {isSubmitting ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  제출 중...
+                </span>
+              ) : '신청하기'}
             </button>
           </form>
         </div>
@@ -664,11 +1063,13 @@ function ApplicationFAQ({
 }
 
 // Success Modal Component
-function SuccessModal({ isOpen, onClose, formType }: { 
+function SuccessModal({ isOpen, onClose, formType, setIsSubmitting }: { 
   isOpen: boolean; 
   onClose: () => void; 
   formType: 'free-beta' | 'pre-order';
+  setIsSubmitting: (isSubmitting: boolean) => void;
 }) {
+  const [isModalSubmitting, setModalSubmitting] = useState(false);
   if (!isOpen) return null;
 
   const title = formType === 'free-beta' ? '무료 베타 서비스 신청' : '서비스 사전 예약';
@@ -705,10 +1106,19 @@ function SuccessModal({ isOpen, onClose, formType }: {
               // 폼을 찾아서 데이터 전송
               const form = document.querySelector('form') as HTMLFormElement;
               if (form) {
+                // 버튼 로딩 상태 활성화
+                setIsSubmitting(true);
+                setModalSubmitting(true);
+                
                 const formData = new FormData(form);
                 const applicationType = formType === 'free-beta' ? '무료 베타 서비스 신청' : '서비스 사전 예약';
                 
                 try {
+                  // 완료된 제작 단계 값을 배열로 수집
+                  const completedStages = Array.from(
+                    form.querySelectorAll('input[name="완료된 제작 단계[]"]:checked')
+                  ).map((cb: Element) => (cb as HTMLInputElement).value);
+                  
                   const response = await fetch('/api/submit-form', {
                     method: 'POST',
                     headers: {
@@ -716,32 +1126,77 @@ function SuccessModal({ isOpen, onClose, formType }: {
                     },
                     body: JSON.stringify({
                       type: applicationType,
+                      applicantType: formData.get('신청자 유형'),
+                      companyName: formData.get('회사/단체명'),
                       performanceName: formData.get('공연명'),
                       genre: formData.get('장르'),
                       expectedDate: formData.get('예상 공연 시기'),
                       expectedAudience: formData.get('예상 관객 수'),
                       email: formData.get('email'),
+                      phone: formData.get('phone'),
+                      progressLevel: formData.get('현재 진행 수준'),
                       concept: formData.get('공연 기획 의도'),
+                      completedStages: completedStages, // 완료된 제작 단계 추가
                       services: Array.from(form.querySelectorAll('input[name="관심 서비스[]"]:checked')).map((cb: Element) => (cb as HTMLInputElement).value)
                     }),
                   });
 
                   if (!response.ok) {
-                    throw new Error('Failed to submit form');
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to submit form');
                   }
 
                   // 성공적으로 제출됨
                   form.reset();
+                  
+                  // 로딩 상태 초기화
+                  setIsSubmitting(false);
+                  setModalSubmitting(false);
+                  
+                  // 성공 메시지 표시
+                  const successMessage = document.createElement('div');
+                  successMessage.className = 'fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow-lg z-50';
+                  successMessage.innerHTML = `
+                    <div class="flex items-center">
+                      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                      </svg>
+                      <span>신청이 성공적으로 접수되었습니다.</span>
+                    </div>
+                  `;
+                  document.body.appendChild(successMessage);
+                  
+                  // 3초 후 성공 메시지 제거
+                  setTimeout(() => {
+                    document.body.removeChild(successMessage);
+                  }, 5000);
                 } catch (error) {
                   console.error('Error submitting form:', error);
                   alert('신청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+                  
+                  // 오류 발생 시에도 로딩 상태 초기화
+                  setIsSubmitting(false);
+                  setModalSubmitting(false);
                 }
               }
               onClose();
             }}
-            className="px-6 py-3 bg-[#c8102e] text-white rounded-md hover:bg-[#9b0000] transition-colors"
+            className={`px-6 py-3 ${
+              formType === 'free-beta' 
+                ? 'bg-[#c8102e]' 
+                : 'bg-[#333]'
+            } text-white rounded-md hover:bg-opacity-90 transition-colors ${isModalSubmitting ? 'opacity-80 cursor-not-allowed' : ''}`}
+            disabled={isModalSubmitting}
           >
-            확인
+            {isModalSubmitting ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                제출 중...
+              </span>
+            ) : '확인'}
           </button>
         </div>
       </div>
@@ -759,11 +1214,11 @@ function Footer() {
             <div className="flex items-center space-x-4 mb-4">
               <Image src="/images/maskit-logo-white.png" alt="마스킷 로고" width={100} height={30} />
               <span className="text-xl font-bold">X</span>
-              <Image src="/images/cjes-logo-white.png" alt="CJeS 로고" width={100} height={30} />
+              <span className="text-xl font-bold font-pretendard">CJeS STUDIO</span>
             </div>
             <p className="text-gray-300 max-w-md">
-              마스킷과 CJeS STUDIO의 협력으로 탄생한 공연 제작 원스톱 서비스입니다.
-              포스터 디자인부터 정산까지, 공연 제작의 A to Z를 한 곳에서 경험하세요.
+              큐리스 프로덕션은 마스킷과 CJeS STUDIO의 협력으로 탄생한 공연 제작 원스톱 서비스입니다.
+              공연 기획부터 정산까지, 공연 제작의 A to Z를 원스탑 서비스로 경험하세요.
             </p>
           </div>
           
