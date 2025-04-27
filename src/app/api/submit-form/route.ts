@@ -1,18 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
-import fs from 'fs';
-import path from 'path';
 import nodemailer from 'nodemailer';
 
-// 서비스 계정 키 파일 직접 불러오기
-const keyPath = path.join(process.cwd(), 'service-account-key.json');
-const serviceAccountCreds = JSON.parse(fs.readFileSync(keyPath, 'utf8'));
-
-// 서비스 계정 인증 설정
+// 서비스 계정 인증 설정 - 환경 변수로부터 가져오기
 const serviceAccountAuth = new JWT({
-  email: "landing@applied-pursuit-456802-c7.iam.gserviceaccount.com", // 스프레드시트에 접근 권한이 있는 계정
-  key: serviceAccountCreds.private_key,
+  email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || "landing@applied-pursuit-456802-c7.iam.gserviceaccount.com", // 스프레드시트에 접근 권한이 있는 계정
+  key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n') || '',
   scopes: [
     'https://www.googleapis.com/auth/spreadsheets',
   ],
