@@ -175,8 +175,8 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error processing form submission:', error);
+  } catch (err) {
+    console.error('Error processing form submission:', err);
     return NextResponse.json(
       { error: 'Failed to process form submission' },
       { status: 500 }
