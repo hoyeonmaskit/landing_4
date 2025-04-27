@@ -3,14 +3,44 @@ import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 import nodemailer from 'nodemailer';
 
-// 서비스 계정 인증 설정 - 환경 변수로부터 가져오기
-const serviceAccountAuth = new JWT({
-  email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || "landing@applied-pursuit-456802-c7.iam.gserviceaccount.com", // 스프레드시트에 접근 권한이 있는 계정
-  key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY?.replace(/\\n/g, '\n') || '',
-  scopes: [
-    'https://www.googleapis.com/auth/spreadsheets',
-  ],
-});
+// 서비스 계정 인증 설정
+import fs from 'fs';
+import path from 'path';
+
+// TS 타입 지정을 위해 명시적으로 선언
+let serviceAccountAuth: JWT;
+
+// 인증 정보 설정 함수
+function setupAuth() {
+  // 로컬 환경에서는 파일에서 읽기 시도
+  try {
+    const keyPath = path.join(process.cwd(), 'service-account-key.json');
+    if (fs.existsSync(keyPath)) {
+      const serviceAccountCreds = JSON.parse(fs.readFileSync(keyPath, 'utf8'));
+      return new JWT({
+        email: serviceAccountCreds.client_email,
+        key: serviceAccountCreds.private_key,
+        scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+      });
+    }
+  } catch (error) {
+    console.log('서비스 계정 키 파일 로드 실패, 환경 변수 사용');
+  }
+
+  // 파일이 없거나 에러 발생 시 환경 변수 사용
+  if (!process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || !process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY) {
+    console.warn('GOOGLE_SERVICE_ACCOUNT 환경 변수가 설정되지 않았습니다');
+  }
+
+  return new JWT({
+    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '',
+    key: (process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+  });
+}
+
+// 인증 설정 초기화
+serviceAccountAuth = setupAuth();
 
 const SPREADSHEET_ID = process.env.BETA_SIGNUP_SPREADSHEET_ID || '1wzmT0aTmQQNbkXmvfwOPh7oWdEunrKoqHh687uiGDtI';
 
