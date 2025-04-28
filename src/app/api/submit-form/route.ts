@@ -135,10 +135,12 @@ async function saveToGoogleSheet(data: FormData): Promise<boolean> {
     
     // Log detailed error info if available
     if (error && typeof error === 'object' && 'response' in error) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const errorResponse = error.response as { status?: number; statusText?: string; data?: any };
       console.error('Google API error details:', {
-        status: error.response?.status,
-        statusText: error.response?.statusText,
-        data: error.response?.data
+        status: errorResponse.status,
+        statusText: errorResponse.statusText,
+        data: errorResponse.data
       });
     }
     
